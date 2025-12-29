@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌈 Aesthetic Timetable Maker</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #fde2e4, #e0f2fe, #ecfeff);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+    }
+
+    .card {
+      border-radius: 24px;
+      border: none;
+      box-shadow: 0 25px 45px rgba(0,0,0,0.12);
+      background: rgba(255,255,255,0.9);
+    }
+
+    .title {
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .timetable-item {
+      border-radius: 18px;
+      padding: 14px 18px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .time {
+      font-weight: 600;
+      min-width: 80px;
+    }
+
+    .delete-btn {
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .prayer { background: #d1fae5; }
+    .study { background: #e0e7ff; }
+    .travel { background: #fef3c7; }
+    .self { background: #fce7f3; }
+    .rest { background: #f3f4f6; }
+
+    footer {
+      text-align: center;
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+
+      <div class="card p-4">
+        <h3 class="text-center title mb-1">🌸 My Aesthetic Timetable</h3>
+        <p class="text-center subtitle mb-4">colourful • calm • 24‑hour format</p>
+
+        <!-- Form -->
+        <div class="row g-2 mb-4">
+          <div class="col-md-3">
+            <input type="time" id="time" class="form-control" />
+          </div>
+          <div class="col-md-5">
+            <input type="text" id="task" class="form-control" placeholder="✨ Task name" />
+          </div>
+          <div class="col-md-3">
+            <select id="type" class="form-select">
+              <option value="prayer">🕌 Prayer</option>
+              <option value="study">📚 Study</option>
+              <option value="travel">🚌 Travel</option>
+              <option value="self">🌿 Self Care</option>
+              <option value="rest">🌙 Rest</option>
+            </select>
+          </div>
+          <div class="col-md-1 d-grid">
+            <button class="btn btn-primary" onclick="addTask()">＋</button>
+          </div>
+        </div>
+
+        <!-- Timetable -->
+        <div id="timetable"></div>
+
+      </div>
+
+      <footer>made with calm & colour 🌈</footer>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  let timetable = JSON.parse(localStorage.getItem("timetable")) || [];
+
+  function render() {
+    const container = document.getElementById("timetable");
+    container.innerHTML = "";
+
+    timetable.sort((a, b) => a.time.localeCompare(b.time));
+
+    timetable.forEach((item, index) => {
+      const div = document.createElement("div");
+      div.className = `timetable-item ${item.type}`;
+      div.innerHTML = `
+        <span class="time">${item.time}</span>
+        <span>${item.task}</span>
+        <button class="delete-btn" onclick="removeTask(${index})">❌</button>
+      `;
+      container.appendChild(div);
+    });
+
+    localStorage.setItem("timetable", JSON.stringify(timetable));
+  }
+
+  function addTask() {
+    const time = document.getElementById("time").value;
+    const task = document.getElementById("task").value.trim();
+    const type = document.getElementById("type").value;
+
+    if (!time || !task) return;
+
+    timetable.push({ time, task, type });
+    document.getElementById("task").value = "";
+    render();
+  }
+
+  function removeTask(index) {
+    timetable.splice(index, 1);
+    render();
+  }
+
+  render();
+</script>
+
+</body>
+</html>
